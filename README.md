@@ -1,29 +1,44 @@
-# Fantasy Football Application
+# Trade Helper - Fantasy Football Trade Analyzer
 
 # Overview
-This project is a cloud-native Fantasy Football application designed to demonstrate scalability, modularity, and fault tolerance using Kubernetes. The system is built using a microservices architecture with independent services for authentication, league management, team services, and player statistics.
+Trade Helper is a minimalist fantasy football trade analyzer designed to help users assess the fairness of potential trades between teams.
+The project demonstrates cloud-native application deployment using Kubernetes, focusing on scalability, modularity, and persistence rather than the complexity of a full fantasy platform.
 
-The primary goal is to ensure high availability and real-time updates for users during peak usage.
+# Project Overview
 
-# System Architecture
-
-Our system follows a microservices-based approach deployed on Kubernetes:
-- Ingress Controller - Routes user requests into the cluster.
-- React Frontend Pod - Provides the user interface for fantasy league management.
-- Backend/API Pod - Coordinates between services, handles user actions, and communicates with databases.
-- Authentication Service + Auth Database - Manages secure login and session data.
-- User Service + User Database - Stores user profiles and preferences.
-- League Service + Leage Database - Handles league creation, membership, and rules.
-- Team Services - Manages team rosters, trades, and matchups.
-- External Player API Integration - Provides real-time player statistics and updates.
+# Goals
+- Implement a multi-pod, full-stack pipeline on Kubernetes.
+- Demonstrate infrastructure as code using YAML manifests for Deployments and Services.
+- Integrate authentication, data persistence, and periodic data updates via a CronJob.
+- Emphasize modularity and scalability for real-world cloud architectures.
 
 # Features
+- User authentication via Auth0
+- Trade fairness scoring via Flask evaluator
+- Player stats stored in MongoDB
+- Automated data refresh CronJob
+- Modular pods for easy scalability
 
-- User registration and authentication
-- League and team creation/management
-- Real-time scoring updates from an external player API
-- Secure and scalable design using Kubernetes
-- Modular microservices architecture for flexibility and evolution
+# Deployment Instructions
+Coming Soon
+
+# Persistence Plan
+MongoDB uses a Persistent Volume Claim (PVC) to store:
+- Player statistics (from external API)
+- Trade evaluation data (cached results)
+
+PVC ensures that data persists across pod restarts
+
+# Testing
+
+| Test Case | Expected Result |
+|---|---|
+| Valid Trade Input | Returns fairness score |
+| Missing Players | Returns error message |
+| CronJob Runs | Updates MongoDB |
+| Pod Restart | MongoDB retains data |
+| Auth0 Login | User authenticated successfully |
+
 
 # Team Members
 
