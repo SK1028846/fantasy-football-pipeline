@@ -49,7 +49,7 @@ PVC ensures that data persists across pod restarts
 | Auth0 Login | User authenticated successfully |
 
 
-# Team Members
+# Team Members (Group 5)
 
 - Michael Davis - Backend developer
 - Stephen Kain - QA / Documentation
