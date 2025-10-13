@@ -1,16 +1,25 @@
 # Trade Helper - Fantasy Football Trade Analyzer
 
 # Overview
-Trade Helper is a minimalist fantasy football trade analyzer designed to help users assess the fairness of potential trades between teams.
-The project demonstrates cloud-native application deployment using Kubernetes, focusing on scalability, modularity, and persistence rather than the complexity of a full fantasy platform.
+Trade Helper is a cloud-native fantasy football trade analyzer designed to help users assess the fairness of potential trades between teams.
+The project focuses on Kubernetes-based deployment, highlighting scalability, modularity, persistence, and real-world DevOps practices rather than complex fantasy logic.
 
 # Project Overview
 
 # Goals
-- Implement a multi-pod, full-stack pipeline on Kubernetes.
-- Demonstrate infrastructure as code using YAML manifests for Deployments and Services.
-- Integrate authentication, data persistence, and periodic data updates via a CronJob.
-- Emphasize modularity and scalability for real-world cloud architectures.
+- Deploy a multi-pod, full-stack application using Kubernetes.
+- Demonstrate infrastructure as code with YAML manifests for Deployments and Services.
+- Integrate user authentication, persistent data storage, and automated updates with a CronJob.
+- Showcase scalable microservice architecture using React, Flask, and MongoDB.
+
+# System Components
+| Component | Description |
+|---|---|
+| Frontend Pod (React + NGINX) | Hosts the user interface where users log in, enter trade details, and view results. Exposed via a NodePort service for external access. |
+| Backend Pod (Flask Evaluator + Auth0 Sidecar) | Multi-container pod that handles trade logic and authentication. Communicates with MongoDB for reading/writing player stats. |
+| MongoDB Pod (Persistent Volume) | Stores player data, trade evaluations, and cached API responses. Uses PVC for durability across restarts. |
+| CronJob | Periodically updates player statistics from an external API. |
+| External API | Provides real-world player statistics used to calculate trade fairness. |
 
 # Features
 - User authentication via Auth0
@@ -42,7 +51,7 @@ PVC ensures that data persists across pod restarts
 
 # Team Members
 
-- Michael Davis
-- Stephen Kain
-- Vance Keesler
-- Matthew Sheehan
+- Michael Davis - Backend developer
+- Stephen Kain - QA / Documentation
+- Vance Keesler - DevOps / Frontend Developer
+- Matthew Sheehan - Project Lead / PM
