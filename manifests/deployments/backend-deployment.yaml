@@ -1,0 +1,46 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: backend-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: backend
+  template:
+    metadata:
+      labels:
+        app: backend
+    spec:
+      containers:
+      - name: backend-main
+        image: busybox
+        command: ["sh", "-c", "while true; do echo 'Backend main container running'; sleep 3600; done"]
+        ports:
+        - containerPort: 80
+        env:
+        - name: MONGO_URI
+          value: "mongodb://mongo-service:27017/tradehelper"
+      - name: auth-sidecar
+        image: busybox
+        command: ["sh", "-c", "while true; do echo -e 'HTTP/1.1 200 OK\r\n\r\nHello from backend' | nc -l -p 80; done"]
+        ports:
+        - containerPort: 8080
+        env:
+        - name: AUTH0_DOMAIN
+          value: "your-auth0-domain"
+        - name: AUTH0_AUDIENCE
+          value: "your-auth0-audience"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: backend-service
+spec:
+  type: ClusterIP
+  selector:
+    app: backend
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 80
