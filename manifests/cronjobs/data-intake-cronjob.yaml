@@ -1,0 +1,21 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: data-intake-cronjob
+spec:
+  schedule: "0 * * * *" # runs every hour or (*/1 * * * *) for every minute
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          containers:
+          - name: data-intake
+            image: busybox
+            command: ["sh", "-c", "echo 'Running data intake'; sleep 5"]
+            env:
+            - name: MONGO_URI
+              value: "mongodb://mongo-service:27017/tradehelper"
+            - name: EXTERNAL_API_URL
+              value: "https://api.example.com/player-data"
+          restartPolicy: OnFailure
+
