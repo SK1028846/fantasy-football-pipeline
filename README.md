@@ -29,11 +29,16 @@ The project focuses on Kubernetes-based deployment, highlighting scalability, mo
 - Modular pods for easy scalability
 
 ## Kubernetes Deployment Instructions
+Clone the repository:
+```bash
+git clone https://github.com/SK1028846/fantasy-football-pipeline.git
+cd fantasy-football-pipeline
+```
+
 ### Applying Manifests
 All YAML manifests for Deployments, Services, CronJobs, and Persistent Volumes are stored in the manifests/ folder. To deploy the full stack in your Kubernetes cluster:
 
 ```bash
-cd ~/fantasy-football-pipeline
 sudo kubectl apply -f manifests/volumes/mongo-pv-pvc.yaml
 sudo kubectl apply -f manifests/deployments/mongo-deployment.yaml
 sudo kubectl apply -f manifests/deployments/backend-deployment.yaml
