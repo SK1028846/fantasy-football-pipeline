@@ -1,0 +1,27 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: nfl-data-ingestion-cronjob
+spec:
+  schedule: "0 4 * * *"  # runs every day at 4 AM
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          containers:
+            - name: nfl-data-ingestion
+              image: md1054470/nfl-fetcher:latest
+              imagePullPolicy: Always
+              env:
+                - name: MONGO_URI
+                  value: "mongodb://mongo-service:27017/nfl"
+                - name: NFL_API_KEY
+                  valueFrom:
+                    secretKeyRef:
+                      name: nfl-api-secret
+                      key: NFL_API_KEY
+                - name: NFL_SEASON
+                  value: "2023REG"
+                - name: NFL_WEEK
+                  value: "1"
+          restartPolicy: OnFailure
