@@ -1,21 +1,23 @@
 apiVersion: batch/v1
 kind: CronJob
 metadata:
-  name: data-intake-cronjob
+  name: nfl-fetcher-cronjob
 spec:
-  schedule: "0 * * * *" # runs every hour or (*/1 * * * *) for every minute
+  schedule: "0 3 * * *" # runs every hour or (*/1 * * * *) for every minute
   jobTemplate:
     spec:
       template:
         spec:
           containers:
-          - name: data-intake
-            image: busybox
-            command: ["sh", "-c", "echo 'Running data intake'; sleep 5"]
-            env:
-            - name: MONGO_URI
-              value: "mongodb://mongo-service:27017/tradehelper"
-            - name: EXTERNAL_API_URL
-              value: "https://api.example.com/player-data"
+            - name: nfl-fetcher
+              image: nfl-fetcher:latest
+              imagePullPolicy: IfNotPresent
+              env:
+                - name: MONGO_URI
+                  value: "mongodb://mongo-service:27017/nfl"
+                - name: NFL_API_KEY
+                  valueFrom:
+                    secretKeyRef:
+                      name: nfl-api-secret
+                      key: NFL_API_KEY
           restartPolicy: OnFailure
-
