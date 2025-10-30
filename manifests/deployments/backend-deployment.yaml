@@ -21,6 +21,7 @@ spec:
         env:
         - name: MONGO_URI
           value: "mongodb://mongo-service:27017/tradehelper"
+
       - name: auth-sidecar
         image: busybox
         command: ["sh", "-c", "while true; do echo -e 'HTTP/1.1 200 OK\r\n\r\nHello from backend' | nc -l -p 80; done"]
@@ -31,6 +32,9 @@ spec:
           value: "your-auth0-domain"
         - name: AUTH0_AUDIENCE
           value: "your-auth0-audience"
+      - name: debug                         # ADDED
+        image: curlimages/curl:latest       # ADDED
+        command: ["sleep", "infinity"]      # ADDED
 ---
 apiVersion: v1
 kind: Service
