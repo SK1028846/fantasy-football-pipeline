@@ -10,8 +10,8 @@ spec:
         spec:
           containers:
             - name: nfl-fetcher
-              image: nfl-fetcher:latest
-              imagePullPolicy: IfNotPresent
+              image: md1054470/nfl-fetcher:latest
+              imagePullPolicy: Always
               env:
                 - name: MONGO_URI
                   value: "mongodb://mongo-service:27017/nfl"
