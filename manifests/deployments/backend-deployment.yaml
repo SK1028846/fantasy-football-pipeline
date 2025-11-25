@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
       - name: backend-main
-        image: busybox
+        image: vonkacuga/nodejs-app:latest
         command: ["sh", "-c", "while true; do echo 'Backend main container running'; sleep 3600; done"]
         ports:
         - containerPort: 80
