@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
       - name: frontend
-        image: nginx:alpine
+        image: ms1031902/fantasy-trade-frontend:latest
         ports:
         - containerPort: 80
 ---
