@@ -23,12 +23,14 @@ spec:
           value: "dev-mol64kews704igfw.us.auth0.com"  # Replace with your Auth0 domain
         - name: VITE_AUTH0_CLIENT_ID
           value: "GjW0wPuJnmTVGHMI3U5tjlRTpHV93IFs"  # Replace with your Auth0 client ID
-        - name: VITE_AUTH0_AUDIENCE
-          value: "https://dev-mol64kews704igfw.us.auth0.com/api/v2/"  # Replace with your Auth0 API audience
+        # VITE_AUTH0_AUDIENCE is optional - only needed if you have a custom API
+        # Remove this or set it to your custom API identifier (not the Management API)
+        # - name: VITE_AUTH0_AUDIENCE
+        #   value: "your-custom-api-identifier"  # Only if you have a custom API in Auth0
         - name: VITE_AUTH0_REDIRECT_URI
           value: "http://localhost:30080/callback"  # Auth0 callback URL using NodePort
         - name: VITE_API_BASE_URL
-          value: "http://backend-service:3000"  # Your backend service URL (internal)
+          value: "/api"  # Relative path - works with ingress routing /api/* to backend
 ---
 apiVersion: v1
 kind: Service
