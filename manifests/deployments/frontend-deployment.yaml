@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
       - name: frontend
-        image: ms1031902/fantasy-trade-frontend:v1.0.1
+        image: ms1031902/fantasy-trade:v1.0.1
         ports:
         - containerPort: 80
 ---
