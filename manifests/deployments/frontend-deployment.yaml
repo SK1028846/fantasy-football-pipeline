@@ -14,9 +14,18 @@ spec:
     spec:
       containers:
       - name: frontend
-        image: ms1031902/fantasy-trade:v1.0.1
+        image: ms1031902/fantasy-trade-frontend:v1.0.1
         ports:
         - containerPort: 80
+        env:
+        - name: VITE_AUTH0_DOMAIN
+          value: "dev-mol64kews704igfw.us.auth0.com"  # Replace with your Auth0 domain
+        - name: VITE_AUTH0_CLIENT_ID
+          value: "GjW0wPuJnmTVGHMI3U5tjlRTpHV93IFs"  # Replace with your Auth0 client ID
+        - name: VITE_AUTH0_AUDIENCE
+          value: "your-auth0-audience"  # Replace with your Auth0 API audience
+        - name: VITE_API_BASE_URL
+          value: "localhost:31110"  # Your backend service URL
 ---
 apiVersion: v1
 kind: Service
