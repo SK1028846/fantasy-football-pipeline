@@ -15,6 +15,7 @@ spec:
       containers:
       - name: frontend
         image: ms1031902/fantasy-trade:latest
+        imagePullPolicy: Always
         ports:
         - containerPort: 80
         env:
@@ -24,8 +25,10 @@ spec:
           value: "GjW0wPuJnmTVGHMI3U5tjlRTpHV93IFs"  # Replace with your Auth0 client ID
         - name: VITE_AUTH0_AUDIENCE
           value: "https://dev-mol64kews704igfw.us.auth0.com/api/v2/"  # Replace with your Auth0 API audience
+        - name: VITE_AUTH0_REDIRECT_URI
+          value: "http://localhost:30080/callback"  # Auth0 callback URL using NodePort
         - name: VITE_API_BASE_URL
-          value: "http://backend-service:3000"  # Your backend service URL
+          value: "http://backend-service:3000"  # Your backend service URL (internal)
 ---
 apiVersion: v1
 kind: Service
