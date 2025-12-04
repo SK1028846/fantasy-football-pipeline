@@ -4,5 +4,5 @@ FROM python:3.11-slim
 WORKDIR /app
 COPY requirements.txt .
 RUN pip install -r requirements.txt
-COPY . .
-CMD ["python", "fetch_nfl_data.py"]
+COPY fetch_sleeper_data.py .
+CMD ["python", "fetch_sleeper_data.py"]
