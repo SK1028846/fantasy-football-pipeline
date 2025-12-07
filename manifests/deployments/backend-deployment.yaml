@@ -12,7 +12,11 @@ spec:
       labels:
         app: backend
     spec:
+      volumes:
+        - name: log-volume
+          emptyDir: {} # Shared volume between main container and sidecar
       containers:
+      # Main Backend Container
       - name: backend-main
         image: vonkacuga/nodejs-app:latest
         ports:
@@ -20,6 +24,28 @@ spec:
         env:
         - name: MONGO_URI
           value: "mongodb://mongo-service:27017/tradehelper"
+        - name: LOG_FILE
+          value: "/var/log/app/app.log"
+        volumeMounts:
+          - name: log-volume
+            mountPath: /var/log/app
+
+        # Sidecar Container: Fluent Bit
+      - name: fluentbit-sidecar
+        image: fluent/fluent-bit:latest
+        volumeMounts:
+          - name: log-volume
+            mountPath: /var/log/app
+        args:
+          - /fluent-bit/bin/fluent-bit
+          - -i
+          - tail
+          - -p
+          - path=/var/log/app/app.log
+          - -p
+          - read_from_head=true
+          - -o
+          - stdout
 ---
 apiVersion: v1
 kind: Service
