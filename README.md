@@ -1,16 +1,16 @@
 # LevelField - Fantasy Football Trade Analyzer
 
 ## Overview
-Trade Helper is a cloud-native fantasy football trade analyzer designed to help users assess the fairness of potential trades between teams.
+LevelField is a cloud-native fantasy football trade analyzer designed to help users assess the fairness of potential trades between teams.
 The project focuses on Kubernetes-based deployment, highlighting scalability, modularity, persistence, and real-world DevOps practices rather than complex fantasy logic.
 
 ## Project Overview
 
 ## Goals
 - Deploy a multi-pod, full-stack application using Kubernetes.
-- Demonstrate infrastructure as code with YAML manifests for Deployments and Services.
+- Demonstrate infrastructure as code with YAML manifests for Deployments, Services, Persistent Volumes, and CronJobs.
 - Integrate user authentication, persistent data storage, and automated updates with a CronJob.
-- Showcase scalable microservice architecture using React, Flask, and MongoDB.
+- Showcase a modular, scalable architecture using React, Vite, Node.js, and MongoDB.
 
 ## System Components
 | Component | Description |
