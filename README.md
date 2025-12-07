@@ -1,4 +1,4 @@
-# Trade Helper - Fantasy Football Trade Analyzer
+# LevelField - Fantasy Football Trade Analyzer
 
 ## Overview
 Trade Helper is a cloud-native fantasy football trade analyzer designed to help users assess the fairness of potential trades between teams.
@@ -15,18 +15,18 @@ The project focuses on Kubernetes-based deployment, highlighting scalability, mo
 ## System Components
 | Component | Description |
 |---|---|
-| Frontend Pod (React + NGINX) | Hosts the user interface where users log in, enter trade details, and view results. Exposed via a NodePort service for external access. |
-| Backend Pod (Flask Evaluator + Auth0 Sidecar) | Multi-container pod that handles trade logic and authentication. Communicates with MongoDB for reading/writing player stats. |
+| Frontend Pod (React + NGINX) | Hosts the user interface where users log in, enter trade details, and view results. Exposed via a NodePort service for external access. Backend integration is not fully connected yet. |
+| Backend Pod (Node.js + Fluent Bit Sidecar) | Main container handles trade evaluation. Fluent Bit sidecar provides centralized logging for backend. |
 | MongoDB Pod (Persistent Volume) | Stores player data, trade evaluations, and cached API responses. Uses PVC for durability across restarts. |
 | CronJob | Periodically updates player statistics from an external API. |
 | External API | Provides real-world player statistics used to calculate trade fairness. |
 
 ## Features
-- User authentication via Auth0
-- Trade fairness scoring via Flask evaluator
-- Player stats stored in MongoDB
-- Automated data refresh CronJob
-- Modular pods for easy scalability
+- Modular Kubernetes deployment with multiple pods
+- Persistent data storage for MongoDB using PVC
+- Centralized logging via Fluent Bit sidecar
+- Automated player data refresh via CronJob
+- 
 
 ## Kubernetes Deployment Instructions
 Clone the repository:
@@ -39,11 +39,11 @@ cd fantasy-football-pipeline
 All YAML manifests for Deployments, Services, CronJobs, and Persistent Volumes are stored in the manifests/ folder. To deploy the full stack in your Kubernetes cluster:
 
 ```bash
-sudo kubectl apply -f manifests/volumes/mongo-pv-pvc.yaml
-sudo kubectl apply -f manifests/deployments/mongo-deployment.yaml
-sudo kubectl apply -f manifests/deployments/backend-deployment.yaml
-sudo kubectl apply -f manifests/deployments/frontend-deployment.yaml
-sudo kubectl apply -f manifests/cronjobs/data-intake-cronjob.yaml
+kubectl apply -f manifests/volumes/mongo-pv-pvc.yaml
+kubectl apply -f manifests/deployments/mongo-deployment.yaml
+kubectl apply -f manifests/deployments/backend-deployment.yaml
+kubectl apply -f manifests/deployments/frontend-deployment.yaml
+kubectl apply -f manifests/cronjobs/data-intake-cronjob.yaml
 ```
 ### Accessing Services
 - Frontend: Exposed via NodePort. Access it using the node IP and port 30080:
@@ -55,7 +55,7 @@ http://<CloudLab-node-IP>:30080
 - Backend: Internal ClusterIP service. Test connectivity from the frontend pod:
 
 ```bash
-sudo kubectl exec -it <frontend-pod> -- curl http://backend-service:80
+sudo kubectl exec -it <frontend-pod> -- curl http://backend-service:3000
 ```
 Expected response: `Hello from backend`
 
@@ -63,46 +63,49 @@ Expected response: `Hello from backend`
 To demonstrate scaling, increase the number of backend replicas:
 
 ```bash
-sudo kubectl scale deploy backend-development --replicas=3
-sudo kubectl get pods -w
+kubectl scale deploy backend-development --replicas=3
+kubectl get pods -w
 ```
 
 - You should see 3 running backend pods.
 - To show self-healing, manually delete a pod:
 
 ```bash
-sudo kubectl delete pod <backend-pod-name>
-sudo kubectl get pods -w
+kubectl delete pod <backend-pod-name>
+kubectl get pods -w
 ```
 
 - Kubernetes automatically recreates the deleted pod, proving self-healing.
 
 ### Sidecar Rationale
-The backend pod contains a sidecar container (Auth0 placeholder) to simulate authentication or logging.
-- Sidecars allow one to extend pod functionality without modifying the main container.
-- In production, this could be a metrics exporter, logger, or authentication agent.
+The backend pod includes a Fluent Bit sidecar:
+- Captures logs from the main backend container using a shared emptyDir volume ( ```/var/log/app``` ).
+- Demonstrates pod extensibility without modifying main container code.
+- Can be adapted for metrics, monitoring, or authentication in production.
 
 ## Persistence Plan
-MongoDB uses a Persistent Volume Claim (PVC) to store:
-- Player statistics (from external API)
-- Trade evaluation data (cached results)
-
-PVC ensures that data persists across pod restarts
+MongoDB uses a Persistent Volume Claim (PVC) mounted at ```/data/db```:
+- Stores player statistics and trade evaluation data.
+- Data persists across pod restarts and backend scaling.
+- Logs from Fluent Bit are ephemeral (```emptyDir```) but captured in stdout for testing.
 
 ## Testing
 
 | Test Case | Expected Result |
 |---|---|
-| Valid Trade Input | Returns fairness score |
-| Missing Players | Returns error message |
-| CronJob Runs | Updates MongoDB |
-| Pod Restart | MongoDB retains data |
+| Backend Pod Logs | Log entries appear in Fluent Bit output |
+| CronJob Execution | MongoDB updated with new player data |
+| PVC Persistence | Data retained after MongoDB pod restart |
+| Scaling Backend | Multiple backend pods run simultaneously |
 | Auth0 Login | User authenticated successfully |
+| Self-Healing | Deleted pod automatically recreated |
+
+Note: Trade evaluation UI is not functional at this time; backend/frontend integration remains a future step.
 
 
 ## Team Members (Group 5)
 
-- Michael Davis - Backend developer
-- Stephen Kain - QA / Documentation
-- Vance Keesler - DevOps / Frontend Developer
-- Matthew Sheehan - Project Lead / PM
+- Michael Davis - Database & Scheduled Processing
+- Stephen Kain - Documentation & Kubernetes Deployments
+- Vance Keesler - Backend Development
+- Matthew Sheehan - Frontend Development
