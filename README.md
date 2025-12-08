@@ -15,7 +15,7 @@ The project focuses on Kubernetes-based deployment, highlighting scalability, mo
 ## System Components
 | Component | Description |
 |---|---|
-| Frontend Pod (React + NGINX) | Hosts the user interface where users log in, enter trade details, and view results. Exposed via a NodePort service for external access. Backend integration is not fully connected yet. |
+| Frontend Pod (React + NGINX) | Hosts the user interface where users log in, enter trade details, and view results. Exposed via a NodePort service for external access. Calls backend through /api, though trade evaluation not yet wired in. |
 | Backend Pod (Node.js + Fluent Bit Sidecar) | Main container handles trade evaluation. Fluent Bit sidecar provides centralized logging for backend. |
 | MongoDB Pod (Persistent Volume) | Stores player data, trade evaluations, and cached API responses. Uses PVC for durability across restarts. |
 | CronJob | Periodically updates player statistics from an external API. |
@@ -26,7 +26,8 @@ The project focuses on Kubernetes-based deployment, highlighting scalability, mo
 - Persistent data storage for MongoDB using PVC
 - Centralized logging via Fluent Bit sidecar
 - Automated player data refresh via CronJob
-- 
+- Secure login flow using Auth0 authentication
+- Stateless frontend and backend containers with clean separation of concerns
 
 ## Kubernetes Deployment Instructions
 Clone the repository:
@@ -35,16 +36,20 @@ git clone https://github.com/SK1028846/fantasy-football-pipeline.git
 cd fantasy-football-pipeline
 ```
 
-### Applying Manifests
-All YAML manifests for Deployments, Services, CronJobs, and Persistent Volumes are stored in the manifests/ folder. To deploy the full stack in your Kubernetes cluster:
+### Using the Deployment Script (apply-all.sh)
+All YAML manifests for Deployments, Services, CronJobs, and Persistent Volumes are stored in the manifests/ folder. To streamline deployment, the repository includes an automated script in the project root that applies all manifests in the correct order:
 
 ```bash
-kubectl apply -f manifests/volumes/mongo-pv-pvc.yaml
-kubectl apply -f manifests/deployments/mongo-deployment.yaml
-kubectl apply -f manifests/deployments/backend-deployment.yaml
-kubectl apply -f manifests/deployments/frontend-deployment.yaml
-kubectl apply -f manifests/cronjobs/data-intake-cronjob.yaml
+chmod +x apply-all.sh
+./apply-all.sh
 ```
+
+This script:
+- Applies PV and PVC first
+- Deploys MongoDB, backend, and frontend
+- Deploys the CronJob
+- Ensures all Kubernetes objects are created without manual sequencing errors
+  
 ### Accessing Services
 - Frontend: Exposed via NodePort. Access it using the node IP and port 30080:
 
@@ -55,7 +60,7 @@ http://<CloudLab-node-IP>:30080
 - Backend: Internal ClusterIP service. Test connectivity from the frontend pod:
 
 ```bash
-sudo kubectl exec -it <frontend-pod> -- curl http://backend-service:3000
+kubectl exec -it <frontend-pod> -- curl http://backend-service:3000
 ```
 Expected response: `Hello from backend`
 
@@ -63,7 +68,7 @@ Expected response: `Hello from backend`
 To demonstrate scaling, increase the number of backend replicas:
 
 ```bash
-kubectl scale deploy backend-development --replicas=3
+kubectl scale deploy backend-deployment --replicas=3
 kubectl get pods -w
 ```
 
@@ -105,7 +110,7 @@ Note: Trade evaluation UI is not functional at this time; backend/frontend integ
 
 ## Team Members (Group 5)
 
-- Michael Davis - Database & Scheduled Processing
-- Stephen Kain - Documentation & Kubernetes Deployments
+- Michael Davis - Database & Data Ingestion
+- Stephen Kain - DevOps, Kubernetes, Documentation
 - Vance Keesler - Backend Development
 - Matthew Sheehan - Frontend Development
